@@ -5,50 +5,6 @@ title: Draft User Guide
 
 ---
 
-{% include admonition.html type="note" title="🚧 Note to self" body="
-<b>For each feature, specify the following:</b>
-<br>
-
-- precise expected outputs when the command succeeds e.g., changes in the GUI, messages shown to the user <br>
-- precise expected outputs when the command fails e.g., what are the error messages shown when a specific parameter is invalid, missing, specified multiple times, etc.<br>
-- Relevant UI mock-ups (they can be hand-drawn or created using a tool such as PowerPoint, PlantUML, Figma, etc. -- they can be very low-fidelity mock-ups, as they are
-    meant to be temporary)<br>
-
-<br>
-TODO Features:
-<br>
-1. Add contacts of new vendors<br>
-2. View all vendors<br>
-3. Remove contacts of old vendors<br>
-4. Interact using the command line<br>
-5. Create tasks to do<br>
-6. Remove tasks that are no longer relevant<br>
-7. View all tasks<br>
-8. Find task by keyword<br>
-9. Find contact by name<br>
-"%}
-
-
-{% include admonition.html type="note" title="Note" %}
-{% include admonition.html type="abstract" title="Abstract" %}
-{% include admonition.html type="info" title="Info" %}
-{% include admonition.html type="tip" title="Tip" %}
-{% include admonition.html type="success" title="Success" %}
-{% include admonition.html type="question" title="Question" %}
-{% include admonition.html type="warning" title="Warning" %}
-{% include admonition.html type="failure" title="Failure" %}
-{% include admonition.html type="danger" title="Danger" %}
-{% include admonition.html type="bug" title="Bug" %}
-{% include admonition.html type="example" title="Example" %}
-{% include admonition.html type="quote" title="Quote" %}
-
-
----
-
-<div style="page-break-after: always;"></div>
-
-<h1> CoordiMate User Guide</h1>
-
 Do you have trouble managing contacts?
 
 Don't worry, CoordiMate is here to help!
@@ -76,15 +32,18 @@ This user guide contains all the information you need to get started with Coordi
 3. CRUD Task
 4. Find Task
 5. Auto-save/load to/from disk
-    1. AddressBook data are saved automatically as a JSON file `[JAR file location]/data/addressbook.json`.
+    1. CoordiMate automatically saves its data as a JSON file located at `[JAR file location]/data/addressbook.json`.
     2. There is no need to save manually.
+    3. On startup, CoordiMate will automatically load existing data (if any) from the JSON file.
 6. Editable file format
-7. Advanced users are welcome to update data directly by editing that data file.
+   1. Advanced users are welcome to update data directly by editing that data file.
 
 {% include admonition.html type="danger" title="Potentially Dangerous Operation!" body="
+
 If your changes to the data file makes its format invalid, AddressBook will discard all data and start with an empty data file at the next run.
 
 Always make a backup before you edit!
+
 " %}
 
 
@@ -95,6 +54,56 @@ Always make a backup before you edit!
 
 
 ## Usage
+
+
+{% include admonition.html type="info" title="Info: About Command Formats" body="
+
+<ul>
+  <li>
+    <p>
+      Words in <code>UPPER_CASE</code> are the parameters to be supplied by the user.<br>
+      e.g. in <code>add n/NAME</code>, <code>NAME</code> is a parameter which can be used as <code>add n/John Doe</code>, <br>
+      where <code>John Doe</code> is the value of the parameter <code>NAME</code>. <br>
+    </p>
+  </li>
+
+  <li>
+    <p>
+      Items in square brackets are optional.<br>
+      e.g <code>n/NAME [t/TAG]</code> can be used as <code>n/John Doe t/friend</code> or as <code>n/John Doe</code>.<br>
+      Note that the square brackets (<code>[</code> and <code>]</code>) are not part of the syntax.
+    </p>
+  </li>
+
+  <li>
+    <p>
+      Items in square brackets with <code>…</code> after them can be used multiple times, including zero times.<br>
+      e.g. <code>[t/TAG]…​</code> can be used as <code> </code> (i.e. 0 times), <code>t/friend</code>, <code>t/friend t/family</code> etc.
+    </p>
+  </li>
+
+  <li>
+    <p>
+      Parameters can be in any order.<br>
+      e.g. if the command specifies <code>n/NAME p/PHONE_NUMBER</code>, <code>p/PHONE_NUMBER n/NAME</code> is also acceptable.
+    </p>
+  </li>
+
+  <li>
+    <p>
+      Extraneous parameters for commands that do not take in parameters (such as <code>help</code>, <code>list</code>, <code>exit</code> and <code>clear</code>) will be ignored.<br>
+      e.g. if the command specifies <code>help 123</code>, it will be interpreted as <code>help</code>.
+    </p>
+  </li>
+</ul>
+
+" %}
+
+{% include admonition.html type="warning" title="Warning: Using the PDF version of this document" body="
+
+If you are using a PDF version of this document, be careful when copying and pasting commands that span multiple lines as space characters surrounding line-breaks may be omitted when copied over to the application.
+
+" %}
 
 ### 1. Viewing help : `help`
 
@@ -203,14 +212,21 @@ Errors:
 <div style="page-break-after: always;"></div>
 
 
-### 5. Find specific vendors: `findPerson`
+### 5. Find specific person: `findPerson`
 
-Type in a few keywords linked to a vendor's name, and watch the right details unfold.
+Type in a few keywords linked to a person's name, and the matching persons' details will be displayed on screen.
+
+{% include admonition.html type="note" title="Note" body="
+
+This command hides all persons that do not match the search criteria. <br>
+To reset the Persons view, simply run the <code>listPerson</code> command to list all persons.
+
+" %}
 
 Format:
 
 ```
-findPerson KEYWORD [MORE_KEYWORDS]
+findPerson KEYWORD [KEYWORDS]…
 ```
 
 - The search is case-insensitive. e.g `hans` will match `Hans`
@@ -218,8 +234,7 @@ findPerson KEYWORD [MORE_KEYWORDS]
 - Only the name is searched.
 - Only full words will be matched e.g. `Han` will not match `Hans`
 - Persons matching at least one keyword will be returned (i.e. `OR` search).
-
-e.g. `Hans Bo` will return `Hans Gruber`, `Bo Yang`
+  - e.g. `Hans Bo` will match `Hans Gruber`, `Bo Yang`
 
 Examples:
 
@@ -231,14 +246,16 @@ Output:
 
 - There are search outcomes to be displayed.
 
-![findPerson success with a list](images/findPerson_success.png)
+![findPerson success with a list](images/output/findPerson_success.png)
 
 
 - There are no search outcomes to be displayed.
 
-![findPerson success with zero results](images/findPerson_success_zeroResults.png)
+![findPerson success with zero results](images/output/findPerson_noResults.png)
 
 Errors:
+
+- Incorrect number of parameters.
 
 ![findPerson error](images/error/findPerson_error.png)
 
@@ -351,37 +368,51 @@ Output:
 <div style="page-break-after: always;"></div>
 
 
-### 10. Find specific task: `findTask`
+### 11. Find specific task: `findTask`
 
-You can locate tasks containing your specified keywords in their names.
+You can locate tasks containing your specified keywords in their title and/or note.
+
+{% include admonition.html type="note" title="Note" body="
+
+This command hides all Tasks that do not match the search criteria. <br>
+To reset the Tasks view, simply run the <code>listTasks</code> command to list all Tasks.
+
+" %}
 
 Format:
 
 ```
-findTask KEYWORD [MORE_KEYWORDS]
+findTask t/KEYWORD [KEYWORDS]… [n/KEYWORD [KEYWORDS]…]
 ```
 
 - The search is case-insensitive. e.g `call` will match `Call`
 - The order of the keywords does not matter. e.g. `Call Caterer` will match `Caterer Call`
-- Only the name is searched.
+- By default, only the title is searched.
+  - To search both the title and note, use the `n/` prefix.
 - Only full words will be matched e.g. `Call` will not match `Calls`
 - Tasks matching at least one keyword will be returned (i.e. `OR` search).
+  - e.g. `Call Caterer` will match `Call Hotel`, `Book Caterer`
 
 Examples:
 
-- `findTask Call` returns `call` and `Call Caterer`
-- `findTask Call Caterer` returns `Call Flower`, `Caterer Find`
+- `findTask t/Call` returns tasks with titles `call` and `Call Caterer`
+- `findTask t/Call Caterer` returns tasks with titles `Call Flower`, `Caterer Find`
+- `findTask t/Call n/Wedding` returns tasks with titles `Call` and note `Wedding`
 
 Output:
 - There are search outcomes to be displayed.
+
   ![findTask_success](images/output/findTask_success.png)
 
 - There are no search outcomes to be displayed.
-  ![addTask_noResults](images/output/findTask_noResults.png)
+  
+  ![findTask_noResults](images/output/findTask_noResults.png)
 
 Errors:
 
-![findTask_error](images/error/findTask_error.png)
+- Incorrect number of parameters.
+  
+  ![findTask_error](images/error/findTask_error.png)
 
 
 <div style="page-break-after: always;"></div>

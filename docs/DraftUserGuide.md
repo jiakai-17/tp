@@ -226,21 +226,22 @@ To reset the Persons view, simply run the <code>listPerson</code> command to lis
 Format:
 
 ```
-findPerson KEYWORD [KEYWORDS]…
+findPerson KEYWORD [MORE_KEYWORDS]…
 ```
 
-- The search is case-insensitive. e.g `hans` will match `Hans`
-- The order of the keywords does not matter. e.g. `Hans Bo` will match `Bo Hans`
+- At least one keyword is required to search.
+- The search is case-insensitive. e.g `hans` will match `Hans`.
+- The order of the keywords does not matter. e.g. `Hans Bo` will match `Bo Hans`.
 - Only the name is searched.
-- Only full words will be matched e.g. `Han` will not match `Hans`
+- Only full words will be matched e.g. `Han` will not match `Hans`.
 - Persons matching at least one keyword will be returned (i.e. `OR` search).
-  - e.g. `Hans Bo` will match `Hans Gruber`, `Bo Yang`
+  - e.g. `Hans Bo` will match `Hans Gruber`, `Bo Yang`.
 
 Examples:
 
 - `findPerson John` returns `john` and `John Doe`
 - `findPerson alex david` returns `Alex Yeoh`, `David Li`
-- `findPerson alexo davido` returns `0 Persons Listed`
+- Assuming `Jane` is not in your contacts list, `findPerson Jane` returns `0 Persons Listed`.
 
 Output:
 
@@ -382,35 +383,38 @@ To reset the Tasks view, simply run the <code>listTasks</code> command to list a
 Format:
 
 ```
-findTask t/KEYWORD [KEYWORDS]… [n/KEYWORD [KEYWORDS]…]
+findTask KEYWORD [MORE_KEYWORDS]…
 ```
 
-- The search is case-insensitive. e.g `call` will match `Call`
-- The order of the keywords does not matter. e.g. `Call Caterer` will match `Caterer Call`
-- By default, only the title is searched.
-  - To search both the title and note, use the `n/` prefix.
-- Only full words will be matched e.g. `Call` will not match `Calls`
-- Tasks matching at least one keyword will be returned (i.e. `OR` search).
-  - e.g. `Call Caterer` will match `Call Hotel`, `Book Caterer`
+- At least one keyword is required to search.
+- The search is case-insensitive. e.g `call` will match `Call`.
+- The order of the keywords does not matter. e.g. `Call Caterer` will match `Caterer Call`.
+- Both the title and note of a task is searched.
+- Only full words will be matched e.g. `Call` will not match `Calls`.
+- Tasks matching at least one keyword in either the title or the note will be returned (i.e. `OR` search).
+  - e.g. `Call Wedding` will match `Call Hotel`, `Wedding Anniversary`.
 
 Examples:
 
-- `findTask t/Call` returns tasks with titles `call` and `Call Caterer`
-- `findTask t/Call Caterer` returns tasks with titles `Call Flower`, `Caterer Find`
-- `findTask t/Call n/Wedding` returns tasks with titles `Call` and note `Wedding`
+- `findTask Call Wedding` 
+  - Finds tasks with titles or notes containing either `Call` or `Wedding`.
+- `findTask Photography`
+  - Finds tasks with titles or notes containing `Photography`.
+- `findTask`
+  - Negative example as no keywords are specified.
 
 Output:
-- There are search outcomes to be displayed.
+- Both tasks are displayed as Task 1 has the word `Call` in its title and Task 2 has the word `Wedding` in its note.
 
   ![findTask_success](images/output/findTask_success.png)
 
-- There are no search outcomes to be displayed.
+- There are no tasks to be displayed, as no Task has the word `Photography` in its title or note.
   
   ![findTask_noResults](images/output/findTask_noResults.png)
 
 Errors:
 
-- Incorrect number of parameters.
+- No keywords are specified.
   
   ![findTask_error](images/error/findTask_error.png)
 
